@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Super Tic Tac Toe</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#7dd3fc;--x:#fca5a5;--o:#c7f9b9;--muted:#94a3b8}
+    *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
+    body{margin:0;min-height:100vh;background:linear-gradient(180deg,#071226,var(--bg));color:#e6eef8;display:flex;align-items:center;justify-content:center;padding:20px}
+    .wrap{width:100%;max-width:980px}
+    header{display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:14px;text-align:center}
+    h1{font-size:40px;margin:0}
+    .controls{display:flex;gap:8px;align-items:center;margin-top:10px}
+    button.btn{background:var(--card);border:1px solid rgba(255,255,255,0.04);color:inherit;padding:8px 12px;border-radius:10px;cursor:pointer}
+    .status{font-size:14px;color:var(--muted)}
+
+    /* Big board layout (3x3 of small boards) */
+    .big-board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;background:transparent}
+    .small-board{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:8px;border-radius:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;aspect-ratio:1;position:relative;border:2px solid rgba(255,255,255,0.03)}
+
+    .cell{background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;font-size:20px;border-radius:6px;cursor:pointer;user-select:none}
+    .cell.disabled{cursor:not-allowed;opacity:0.5}
+
+    .mark{font-weight:700;font-size:28px}
+    .mark.x{color:var(--x)}
+    .mark.o{color:var(--o)}
+
+    .overlay{position:absolute;inset:6px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:48px;pointer-events:none;opacity:0;transform:scale(0.9);transition:all 250ms ease}
+    .small-board.won .overlay{opacity:1;transform:scale(1);pointer-events:auto}
+    .small-board.won.x .overlay{color:var(--x);}
+    .small-board.won.o .overlay{color:var(--o);}
+    .small-board.draw .overlay{opacity:1;color:var(--muted);}
+
+    .big-overlay{position:fixed;left:0;right:0;top:0;bottom:0;background:linear-gradient(0deg,rgba(2,6,23,0.6),rgba(2,6,23,0.6));display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+    .dialog{background:var(--card);padding:22px;border-radius:12px;max-width:480px;text-align:center}
+
+    footer{margin-top:12px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* Responsive smaller screens */
+    @media (max-width:540px){.wrap{padding:6px} h1{font-size:28px} .mark{font-size:22px} .cell{font-size:16px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Super Tic Tac Toe</h1>
+      <div class="status" id="status">Player X's turn</div>
+      <div class="controls">
+        <button class="btn" id="restart">Restart</button>
+        <div class="status">Two-player local</div>
+      </div>
+    </header>
+
+    <main>
+      <div class="big-board" id="bigBoard"></div>
+    </main>
+
+    <footer>
+        <h2>    
+              If you dont know how to play, SKILL ISSUE!
+        
+        </h2>    </footer>
+
+    <footer>
+        <h4>This game is a beta version developed by Ujaan Das. I might change the game overtime or something, but for now...please enjoy!</h4>
+        <h3>UDASSTUFF</h3>
+        
+    </footer>
+
+
+
+   <!-- Bottom center glowing button -->
+   <div class="bottom-button">
+     <button class="glow-btn" onclick="window.location.href='index.html'">Go back to main page</button>
+   </div>
+
+
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#7dd3fc;--x:#fca5a5;--o:#c7f9b9;--muted:#94a3b8}
+    *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
+    body{margin:0;min-height:100vh;background:linear-gradient(180deg,#071226,var(--bg));color:#e6eef8;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:20px}
+    .wrap{width:100%;max-width:980px}
+    header{display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:14px;text-align:center}
+    h1{font-size:40px;margin:0}
+    .controls{display:flex;gap:20px;align-items:center;margin-top:10px} /* increased gap */
+    button.btn{background:var(--card);border:1px solid rgba(255,255,255,0.04);color:inherit;padding:8px 12px;border-radius:10px;cursor:pointer}
+    .status{font-size:14px;color:var(--muted)}
+
+    /* Big board layout (3x3 of small boards) */
+    .big-board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;background:transparent}
+    .small-board{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:8px;border-radius:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;aspect-ratio:1;position:relative;border:2px solid rgba(255,255,255,0.03)}
+
+    .cell{background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;font-size:20px;border-radius:6px;cursor:pointer;user-select:none}
+    .cell.disabled{cursor:not-allowed;opacity:0.5}
+
+    .mark{font-weight:700;font-size:28px}
+    .mark.x{color:var(--x)}
+    .mark.o{color:var(--o)}
+
+    .overlay{position:absolute;inset:6px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:48px;pointer-events:none;opacity:0;transform:scale(0.9);transition:all 250ms ease}
+    .small-board.won .overlay{opacity:1;transform:scale(1);pointer-events:auto}
+    .small-board.won.x .overlay{color:var(--x);}
+    .small-board.won.o .overlay{color:var(--o);}
+    .small-board.draw .overlay{opacity:1;color:var(--muted);}
+
+    .big-overlay{position:fixed;left:0;right:0;top:0;bottom:0;background:linear-gradient(0deg,rgba(2,6,23,0.6),rgba(2,6,23,0.6));display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+    .dialog{background:var(--card);padding:22px;border-radius:12px;max-width:480px;text-align:center}
+
+    footer{margin-top:12px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* Bottom glowing button container */
+    .bottom-button {
+      display:flex;
+      justify-content:center;
+      margin-top:20px;
+      margin-bottom:10px;
+    }
+
+    /* Glow button styles */
+    .glow-btn {
+      --glow-color: rgb(255, 255, 255);
+      --glow-spread-color: rgba(0, 132, 255, 0.959); 
+      --enhanced-glow-color: rgb(255, 255, 255);
+      --btn-color: rgba(255,255,255,0.02);
+      border: .25em solid var(--glow-color);
+      padding: 1em 3em;
+      color: var(--glow-color);
+      font-size: 15px;
+      font-weight: bold;
+      background-color: var(--btn-color);
+      border-radius: 1em;
+      outline: none;
+      box-shadow: 0 0 1em .25em var(--glow-color),
+            0 0 4em 1em var(--glow-spread-color),
+            inset 0 0 .75em .25em var(--glow-color);
+      text-shadow: 0 0 .5em var(--glow-color);
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .glow-btn::after {
+      pointer-events: none;
+      content: "";
+      position: absolute;
+      top: 120%;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: var(--glow-spread-color);
+      filter: blur(2em);
+      opacity: .7;
+      transform: perspective(1.5em) rotateX(35deg) scale(1, .6);
+    }
+
+    .glow-btn:hover {
+      color: var(--btn-color);
+      background-color: var(--glow-color);
+      box-shadow: 0 0 1em .25em var(--glow-color),
+            0 0 4em 2em var(--glow-spread-color),
+            inset 0 0 .75em .25em var(--glow-color);
+    }
+
+    .glow-btn:active {
+      box-shadow: 0 0 0.6em .25em var(--glow-color),
+            0 0 2.5em 2em var(--glow-spread-color),
+            inset 0 0 .5em .25em var(--glow-color);
+    }
+
+    /* Responsive smaller screens */
+    @media (max-width:540px){
+      .wrap{padding:6px} 
+      h1{font-size:28px} 
+      .mark{font-size:22px} 
+      .cell{font-size:16px}
+    }
+  </style>
+
+  </div>
+
+  <!-- end UI -->
+
+  <template id="smallBoardTemplate">
+    <div class="small-board">
+      <!-- 9 cells will be cloned in script -->
+      <div class="overlay"></div>
+    </div>
+  </template>
+
+  <script>
+    // Game state
+    const LINES = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    const bigBoardEl = document.getElementById('bigBoard');
+    const statusEl = document.getElementById('status');
+    const restartBtn = document.getElementById('restart');
+
+    let currentPlayer = 'X';
+    // smallBoards: array of 9 boards, each board is array of 9 cell values: null, 'X', 'O'
+    let smallBoards = [];
+    // winner of small board: null, 'X', 'O', 'D' (draw)
+    let smallWinners = [];
+    let gameOver = false;
+
+    function init(){
+      bigBoardEl.innerHTML = '';
+      smallBoards = Array.from({length:9}, ()=>Array(9).fill(null));
+      smallWinners = Array(9).fill(null);
+      currentPlayer = 'X';
+      gameOver = false;
+      statusEl.textContent = `Player ${currentPlayer}'s turn`;
+
+      for(let i=0;i<9;i++){
+        const tpl = document.getElementById('smallBoardTemplate');
+        const sb = tpl.content.firstElementChild.cloneNode(true);
+        sb.dataset.boardIndex = i;
+        const overlay = sb.querySelector('.overlay');
+        overlay.textContent = '';
+        // create 9 cells
+        for(let c=0;c<9;c++){
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          cell.dataset.board = i;
+          cell.dataset.cell = c;
+          cell.addEventListener('click', onCellClick);
+          sb.appendChild(cell);
+        }
+        bigBoardEl.appendChild(sb);
+      }
+    }
+
+    function onCellClick(e){
+      if(gameOver) return;
+      const cell = e.currentTarget;
+      const b = Number(cell.dataset.board);
+      const c = Number(cell.dataset.cell);
+      // ignore if small board is already won or cell taken
+      if(smallWinners[b]) return;
+      if(smallBoards[b][c]) return;
+
+      // place
+      smallBoards[b][c] = currentPlayer;
+      cell.innerHTML = `<span class="mark ${currentPlayer.toLowerCase()}">${currentPlayer}</span>`;
+      cell.classList.add('disabled');
+
+      // check small board win/draw
+      const winner = checkBoardWin(smallBoards[b]);
+      if(winner){
+        smallWinners[b] = winner;
+        revealSmallBoardWinner(b, winner);
+      } else if(smallBoards[b].every(v=>v!==null)){
+        smallWinners[b] = 'D';
+        revealSmallBoardWinner(b, 'D');
+      }
+
+      // check big board win
+      const bigWinner = checkBigWinner();
+      if(bigWinner){
+        gameOver = true;
+        showGameOver(bigWinner);
+        return;
+      }
+
+      // check tie across all small boards (all won or draw)
+      if(smallWinners.every(v=>v!==null)){
+        gameOver = true;
+        showGameOver('D');
+        return;
+      }
+
+      // swap player
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      statusEl.textContent = `Player ${currentPlayer}'s turn`;
+    }
+
+    function checkBoardWin(cells){
+      for(const [a,b,c] of LINES){
+        if(cells[a] && cells[a]===cells[b] && cells[a]===cells[c]) return cells[a];
+      }
+      return null;
+    }
+
+    function revealSmallBoardWinner(boardIndex, winner){
+      const sb = bigBoardEl.children[boardIndex];
+      sb.classList.add(winner==='D'? 'draw' : 'won');
+      if(winner==='D'){
+        sb.classList.remove('x','o');
+        sb.querySelector('.overlay').textContent = '\u2014'; // em dash
+        sb.querySelector('.overlay').style.fontSize = '40px';
+      } else {
+        sb.classList.add(winner.toLowerCase());
+        sb.querySelector('.overlay').textContent = winner;
+      }
+      // disable remaining cells visually & functionally
+      const cells = sb.querySelectorAll('.cell');
+      cells.forEach((cell, idx)=>{
+        cell.classList.add('disabled');
+      });
+    }
+
+    function checkBigWinner(){
+      // For big winner consider smallWinners array where only X or O count
+      for(const [a,b,c] of LINES){
+        if(smallWinners[a] && smallWinners[a] !== 'D' && smallWinners[a] === smallWinners[b] && smallWinners[a] === smallWinners[c]){
+          return smallWinners[a];
+        }
+      }
+      return null;
+    }
+
+    function showGameOver(winner){
+      const overlay = document.createElement('div');
+      overlay.className = 'big-overlay';
+      const dialog = document.createElement('div');
+      dialog.className = 'dialog';
+      if(winner === 'D'){
+        dialog.innerHTML = `<h2>It's a draw!</h2><p>a draw in super tic tac toe is crazy ngl</p>`;
+      } else {
+        dialog.innerHTML = `<h2>Player ${winner} wins!</h2><p>They got 3 small boards in a row.</p>`;
+      }
+      const again = document.createElement('button');
+      again.className = 'btn';
+      again.textContent = 'Play again';
+      again.addEventListener('click', ()=>{ document.body.removeChild(overlay); init(); });
+      dialog.appendChild(again);
+      overlay.appendChild(dialog);
+      document.body.appendChild(overlay);
+      statusEl.textContent = winner === 'D' ? "Game over: draw" : `Game over: ${winner} wins`;
+    }
+
+    restartBtn.addEventListener('click', ()=>{
+      init();
+    });
+
+    // initialize
+    init();
+  </script>
+</body>
+</html>

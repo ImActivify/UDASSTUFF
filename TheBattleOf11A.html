@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Battle Of 11A</title>
+  <style>
+    body { 
+      background: radial-gradient(circle, #1a1a2e, #0f3460, #000);
+      background-attachment: fixed; /* so it stays while scrolling */
+      color: #eee; 
+      font-family: Arial, sans-serif; 
+      text-align: center; 
+      margin: 0; 
+      padding: 0; 
+    }
+
+    #gameCanvas { 
+      background: linear-gradient(90deg, #1a1a2e, #16213e, #0f3460, #16213e, #1a1a2e); 
+      display: block; 
+      margin: 20px auto; 
+      border: 2px solid #0f3460; 
+      border-radius: 10px; 
+      box-shadow: 0 0 50px #0f3460;
+    }
+
+    .shop, .status { 
+      margin: 10px auto; 
+      padding: 10px; 
+      background: rgba(15,52,96,0.85); /* semi-transparent so gradient shows */
+      border-radius: 8px; 
+      width: fit-content; 
+    }
+
+    button { 
+      margin: 5px; 
+      padding: 8px 12px; 
+      background: #0f3460; 
+      color: #eee; 
+      border: none; 
+      border-radius: 5px; 
+      cursor: pointer; 
+      transition: background 0.2s ease-in-out;
+    }
+
+    button:hover { 
+      background: #0f3460; 
+    }
+
+    #timer { 
+      font-size: 22px; 
+      margin: 10px; 
+      font-weight: bold; 
+      color: #f5a623;
+}
+  </style>
+</head>
+<body>
+  <h1>The Battle Of 11A</h1>
+  <div id="timer">Preparation Time: 60s</div>
+  <button id="startBattle">Good luck! May the best team win!</button>
+
+  <div class="status">
+    <div>Player 1 Coins: <span id="coins1"></span></div>
+    <div>Player 2 Coins: <span id="coins2"></span></div>
+  </div>
+
+  <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+  <div class="shop">
+    <h2>Shop</h2>
+        <h3>Welcome to the shop! You can buy a student of Class 11A to defend your king over here! Different students have different HP and different attack power, so pick wisely on who you think can save your king...</h3>
+
+    <div>
+      <button class="button" onclick="buyUnit(1,'Shubhan')">
+        <span>P1 Buy Shubhan (50)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(1,'Prajit')">
+        <span>P1 Buy Prajit (25)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(1,'Arya')">
+        <span>P1 Buy Arya (130)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(1,'Jishnu')">
+        <span>P1 Buy Jishnu (100)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(1,'Rohan')">
+        <span>P1 Buy Rohan (300)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(1,'Ujaan')">
+        <span>P1 Buy Ujaan (150)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(1,'Anakin')">
+        <span>P1 Buy Anakin (250)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(1,'Ishaan')">
+        <span>P1 Buy Ishaan (30)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(1,'HM')">
+        <span>P1 Buy Bald Man [EXCLUSIVE] (500)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(1,'Hitansh')">
+        <span>P1 Buy Hitansh (300)</span>
+        <div class="button-overlay"></div>
+      </button>
+    </div>
+    
+    <div>
+      <button class="button" onclick="buyUnit(2,'Shubhan')">
+        <span>P2 Buy Shubhan (50)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(2,'Prajit')">
+        <span>P2 Buy Prajit (25)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(2,'Arya')">
+        <span>P2 Buy Arya (130)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(2,'Jishnu')">
+        <span>P2 Buy Jishnu (100)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(2,'Rohan')">
+        <span>P2 Buy Rohan (300)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(2,'Ujaan')">
+        <span>P2 Buy Ujaan (150)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(2,'Anakin')">
+        <span>P2 Buy Anakin (250)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(2,'Ishaan')">
+        <span>P2 Buy Ishaan (30)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(2,'HM')">
+        <span>P2 Buy Bald Man [EXCLUSIVE] (500)</span>
+        <div class="button-overlay"></div>
+      </button>
+      <button class="button" onclick="buyUnit(2,'Hitansh')">
+        <span>P2 Buy Hitansh (300)</span>
+        <div class="button-overlay"></div>
+      </button>
+    </div>
+        <h6>This game is a beta version developed by Ujaan Das. I might change the game overtime or something, but for now...please enjoy!</h6>
+        <h6>UDASSTUFF</h6>
+    
+
+
+
+      <button class="button" onclick="window.location.href='index.html'">
+        <span>Go back to main page</span>
+        <div class="button-overlay"></div>
+
+<style>
+
+.button {
+  font-size: 19px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgb(20, 74, 139) 0%, rgb(20, 74, 139) 66%, rgb(20, 74, 139) 100%);
+  color: rgb(218, 218, 218);
+  border: none;
+  padding: 2px;
+  font-weight: 800;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.button span {
+  border-radius: 10px;
+  padding: 0.8em 1.3em;
+  padding-right: 1.2em;
+  text-shadow: 0px 0px 20px rgb(15, 52, 96);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s;
+  background-image: linear-gradient(to right, #ffffff, #d8d5ff, #b4d9ff, #d7ebff, #c0e0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; /* important */
+  color: transparent;
+  background-size: 300%;
+  background-position: -100%;
+  animation: animatedText 5s infinite alternate-reverse;
+}
+
+.button-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-conic-gradient(rgb(15, 52, 96) 0.0000001%, rgb(15, 52, 96) 0.000104%) 60% 60%/600% 600%;
+  filter: opacity(10%) contrast(105%);
+  -webkit-filter: opacity(10%) contrast(105%);
+}
+
+@keyframes animatedText {
+  to {
+    background-position: 100%;
+  }
+}
+
+
+</style>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let gamePhase = "prep"; // 'prep' or 'battle'
+let prepTime = 60;
+let timerInterval;
+
+// Player data
+let players = [
+  { id:1, coins: Math.floor(Math.random()*301)+1200, units: [], king:{x:50, y:200, hp:500} },
+  { id:2, coins: Math.floor(Math.random()*301)+1200, units: [], king:{x:750, y:200, hp:500} }
+];
+
+
+
+const unitTypes = {
+  Shubhan: {cost:50, hp:1500, atk:10, emoji:"‍✈️"},
+  Prajit: {cost:25, hp:750, atk:5, emoji:"👨🏿"},
+  Arya: {cost:130, hp:3250, atk:12, emoji:"💪"},
+  Jishnu: {cost:100, hp:2500, atk:13, emoji:"🏹"},
+  Rohan: {cost:300, hp:4000, atk:25, emoji:"🫃"},
+  Ujaan: {cost:150, hp:1500, atk:10, emoji:"💀"},
+  Anakin: {cost:250, hp:1000, atk:15, emoji:"🗿"},
+  Ishaan: {cost:30, hp:1650, atk:12, emoji:"👅"},
+  HM: {cost:500, hp:2000, atk:47, emoji:" 👨🏻‍🦲 "},
+  Hitansh: {cost:300, hp:3000, atk:25, emoji:" 🔵 "}
+};
+
+
+// Display coins
+function updateStatus(){
+  document.getElementById("coins1").innerText = players[0].coins;
+  document.getElementById("coins2").innerText = players[1].coins;
+}
+updateStatus();
+
+// Buy unit
+function buyUnit(playerId, type){
+  if(gamePhase!=="prep") return; // disable after battle
+  let p = players[playerId-1];
+  let u = unitTypes[type];
+  if(p.coins >= u.cost){
+    p.coins -= u.cost;
+    let x = (p.id===1)? Math.random()*300+50 : Math.random()*300+400;
+    let y = Math.random()*350+25;
+    p.units.push({type, x, y, hp:u.hp});
+    updateStatus();
+  }
+}
+
+// Draw loop
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // Mid line
+  ctx.strokeStyle = "#444";
+  ctx.beginPath();
+  ctx.moveTo(400,0); ctx.lineTo(400,400); ctx.stroke();
+
+  // Draw kings
+  players.forEach(p=>{
+    ctx.font = "28px Arial"; // bigger font for the king emoji
+    ctx.fillText("👑", p.king.x-14, p.king.y+10); // draw king emoji
+
+    // King label
+    ctx.fillStyle = "white";
+    ctx.font = "12px Arial";
+    ctx.fillText("King "+p.id, p.king.x-20, p.king.y-25);
+
+    // HP bar
+    ctx.fillStyle = "red";
+    ctx.fillRect(p.king.x-25, p.king.y+20, 50, 5);
+    ctx.fillStyle = "green";
+    ctx.fillRect(p.king.x-25, p.king.y+20, (p.king.hp/500)*50, 5);
+  });
+
+// Draw units
+players.forEach(p=>{
+  p.units.forEach(u=>{
+    let emoji = unitTypes[u.type].emoji;
+    
+    // default size
+    let fontSize = 16;  
+    
+    // make Rohan & Hitansh bigger
+    if(u.type === "Rohan" || u.type === "Hitansh"){
+      fontSize = 26;  
+    }
+
+    ctx.font = `${fontSize}px Arial`;
+    ctx.fillText(emoji, u.x-10, u.y+5);
+
+    // HP text (smaller font above)
+    ctx.fillStyle = "white";
+    ctx.font = "10px Arial";
+    ctx.fillText(u.hp, u.x-10, u.y-15);
+  });
+});
+
+
+}
+// Battle simulation
+function battleStep(){
+  players.forEach((p,i)=>{
+    let enemy = players[1-i];
+    p.units.forEach(u=>{
+      if(u.hp>0){
+        // find closest target
+        let targets = enemy.units.filter(t=>t.hp>0);
+        targets.push(enemy.king);
+        let target = targets.sort((a,b)=>{
+          let da = (a.x-u.x)**2+(a.y-u.y)**2;
+          let db = (b.x-u.x)**2+(b.y-u.y)**2;
+          return da-db;
+        })[0];
+        if(target){
+          target.hp -= unitTypes[u.type].atk*0.05; // attack power per frame
+        }
+      }
+    });
+  });
+
+  // Check kings
+  players.forEach(p=>{
+    if(p.king.hp<=0){
+      alert("Player "+(3-p.id)+" wins!");
+      clearInterval(timerInterval);
+      gamePhase = "ended";
+    }
+  });
+}
+
+// Main loop
+function loop(){
+  draw();
+  if(gamePhase==="battle") battleStep();
+  requestAnimationFrame(loop);
+}
+loop();
+
+// Prep countdown
+function startPrepTimer(){
+  let t=prepTime;
+  document.getElementById("timer").innerText = "Preparation Time: "+t+"s";
+  timerInterval = setInterval(()=>{
+    t--;
+    document.getElementById("timer").innerText = "Preparation Time: "+t+"s";
+    if(t<=0){
+      clearInterval(timerInterval);
+      startBattle();
+    }
+  },1000);
+}
+
+// Start battle
+function startBattle(){
+  if(gamePhase!=="prep") return;
+  gamePhase = "battle";
+  document.getElementById("timer").innerText = "Battle in Progress!";
+}
+
+
+startPrepTimer();
+</script>
+</body>
+</html>
